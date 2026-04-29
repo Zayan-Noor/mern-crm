@@ -10,7 +10,8 @@ const root = path.join(__dirname, '..');
 const serverEnv = path.join(root, 'server', '.env');
 const clientEnv = path.join(root, 'client', '.env');
 
-const SERVER_TEMPLATE = `MONGO_URI=mongodb://127.0.0.1:27017/mern-crm
+const SERVER_TEMPLATE = `USE_MEMORY_DB=1
+MONGO_URI=mongodb://127.0.0.1:27017/mern-crm
 JWT_SECRET=dev-jwt-secret-change-me-in-production-use-long-random-string
 PORT=5000
 `;

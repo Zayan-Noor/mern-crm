@@ -12,7 +12,7 @@ Published as **`mern-crm`** on GitHub: [https://github.com/Zayan-Noor/mern-crm](
 |----------|-------------------------------------------------|
 | Backend  | Node.js, Express, Mongoose, JWT (bcrypt)        |
 | Frontend | React (Vite), Tailwind CSS, Recharts, hello-pangea/dnd, react-hot-toast |
-| Database | MongoDB Atlas **or** local MongoDB (Docker compose included) |
+| Database | In-memory MongoDB (dev), Atlas, **or** Docker/local MongoDB |
 
 Monorepo layout:
 
@@ -22,7 +22,7 @@ Monorepo layout:
 ## Prerequisites
 
 - Node.js 18+
-- MongoDB: either [MongoDB Atlas](https://www.mongodb.com/atlas) **or** [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the bundled database
+- Nothing else required for the default dev setup (database runs in RAM via `mongodb-memory-server`). The first `npm run dev` may download a MongoDB binary once (~600 MB).
 
 ## Setup
 
@@ -44,34 +44,19 @@ cd ../client && npm install
 
 ### 2. Environment variables
 
-**Option A — Quick local run (Docker MongoDB)**
+**Easiest — zero Docker / zero Atlas**
 
-Start MongoDB and create default env files (skipped if `server/.env` / `client/.env` already exist):
+Create defaults (skipped if files already exist):
 
 ```bash
 npm run setup:local
-npm run docker:up
 ```
 
-**Option B — Manual**
+This sets `USE_MEMORY_DB=1` in `server/.env`. Then run **`npm run dev`** — the API seeds demo data automatically on first start if the DB is empty.
 
-Copy `server/.env.example` → `server/.env` and `client/.env.example` → `client/.env`, then fill in values.
+**Docker MongoDB** (persistent local DB): after `npm run setup:local`, set `USE_MEMORY_DB=0` in `server/.env`, run `npm run docker:up`, then `npm run seed` once, then `npm run dev`.
 
-For Atlas, use a URI like:
-
-```env
-MONGO_URI=mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/mern-crm?retryWrites=true&w=majority
-JWT_SECRET=your-long-random-secret-min-32-chars
-PORT=5000
-```
-
-For local Docker (after `npm run docker:up`):
-
-```env
-MONGO_URI=mongodb://127.0.0.1:27017/mern-crm
-JWT_SECRET=your-long-random-secret-min-32-chars
-PORT=5000
-```
+**MongoDB Atlas**: set `USE_MEMORY_DB=0`, put your Atlas URI in `MONGO_URI`, set `JWT_SECRET`, then `npm run seed` and `npm run dev`.
 
 **`client/.env`:**
 
@@ -81,26 +66,18 @@ VITE_API_URL=http://localhost:5000
 
 Adjust `VITE_API_URL` if the API runs on another host or port.
 
-### 3. Seed sample data (recommended)
+### 3. Demo login (after seed)
 
-With MongoDB running and `MONGO_URI` set in `server/.env`:
-
-```bash
-npm run seed
-```
-
-(or `cd server && npm run seed`)
-
-Creates a demo user:
+When sample data exists:
 
 - Email: `demo@crm.local`
 - Password: `demo123456`
 
-Also inserts 10 contacts (mixed statuses) and 8 deals (mixed stages).
+(`npm run seed` from the repo root still works for a full reset of demo data when using a real MongoDB URI.)
 
 ### 4. Run in development
 
-Ensure MongoDB is reachable (`npm run docker:up` if you use Docker). Then from the **repository root**:
+From the **repository root**:
 
 ```bash
 npm run dev

@@ -12,6 +12,15 @@ async function seed() {
   }
   await mongoose.connect(process.env.MONGO_URI);
 
+  if (process.env.SEED_ONLY_IF_EMPTY === '1') {
+    const existing = await User.countDocuments();
+    if (existing > 0) {
+      console.log('Seed skipped — database already has data.');
+      await mongoose.disconnect();
+      return;
+    }
+  }
+
   await Deal.deleteMany({});
   await Contact.deleteMany({});
   await User.deleteMany({});
