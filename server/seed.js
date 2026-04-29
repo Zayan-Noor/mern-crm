@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { DEMO_DISPLAY_NAME, DEMO_EMAIL, DEMO_PASSWORD } from '../shared/demo-user.js';
 import User from './models/User.js';
 import Contact from './models/Contact.js';
 import Deal from './models/Deal.js';
@@ -25,10 +26,10 @@ async function seed() {
   await Contact.deleteMany({});
   await User.deleteMany({});
 
-  const hashed = await bcrypt.hash('demo123456', 12);
+  const hashed = await bcrypt.hash(DEMO_PASSWORD, 12);
   const user = await User.create({
-    name: 'Demo User',
-    email: 'demo@crm.local',
+    name: DEMO_DISPLAY_NAME,
+    email: DEMO_EMAIL,
     password: hashed,
   });
 
@@ -85,7 +86,7 @@ async function seed() {
   }
 
   console.log('Seed complete: 1 user, 10 contacts, 8 deals');
-  console.log('Login: demo@crm.local / demo123456');
+  console.log(`Login — ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
   await mongoose.disconnect();
 }
 

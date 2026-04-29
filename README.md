@@ -2,6 +2,17 @@
 
 Full-stack CRM application with MongoDB, Express, React (Vite), and Node.js: JWT auth, contacts with notes, deals with kanban stages, and a dashboard with analytics.
 
+## Demo credentials
+
+Use these after the database has been seeded (automatic on first `npm run dev` with `USE_MEMORY_DB=1`, or run `npm run seed` against your MongoDB).
+
+| | |
+|--|--|
+| **Email** | `demo@crm.local` |
+| **Password** | `demo123456` |
+
+Single source of truth: [`shared/demo-user.js`](shared/demo-user.js) (used by `server/seed.js` and the login UI). In **development**, the login page includes **Sign in as demo**. To show that panel in a production build, set `VITE_SHOW_DEMO_LOGIN=true` in `client/.env`.
+
 ## Repository
 
 Published as **`mern-crm`** on GitHub: [https://github.com/Zayan-Noor/mern-crm](https://github.com/Zayan-Noor/mern-crm).
@@ -66,16 +77,7 @@ VITE_API_URL=http://localhost:5000
 
 Adjust `VITE_API_URL` if the API runs on another host or port.
 
-### 3. Demo login (after seed)
-
-When sample data exists:
-
-- Email: `demo@crm.local`
-- Password: `demo123456`
-
-(`npm run seed` from the repo root still works for a full reset of demo data when using a real MongoDB URI.)
-
-### 4. Run in development
+### 3. Run in development
 
 From the **repository root**:
 
@@ -98,7 +100,9 @@ cd server && npm run dev
 cd client && npm run dev
 ```
 
-### 5. Create the GitHub repository (optional)
+Full demo reset when using a persistent MongoDB: `npm run seed`.
+
+### 4. Create the GitHub repository (optional)
 
 From the project root after `git init` and an initial commit:
 

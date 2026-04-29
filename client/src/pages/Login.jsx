@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { DEMO_EMAIL, DEMO_PASSWORD } from '@shared/demo-user.js';
 import AuthLoading from '../components/AuthLoading.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 
@@ -11,6 +12,8 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const showDemo =
+    import.meta.env.DEV || import.meta.env.VITE_SHOW_DEMO_LOGIN === 'true';
 
   if (!authReady) return <AuthLoading />;
   if (isAuthenticated) return <Navigate to={from} replace />;
@@ -28,6 +31,23 @@ export default function Login() {
     }
   }
 
+  async function signInAsDemo() {
+    setEmail(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
+    setLoading(true);
+    try {
+      await login(DEMO_EMAIL, DEMO_PASSWORD);
+      toast.success('Signed in as demo user');
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message ||
+          'Demo login failed — run the API so the database can seed (npm run dev).'
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950">
       <div className="w-full max-w-md">
@@ -38,6 +58,27 @@ export default function Login() {
           <h1 className="text-2xl font-semibold text-white">Sign in</h1>
           <p className="text-slate-500 mt-1 text-sm">Access your workspace</p>
         </div>
+
+        {showDemo && (
+          <div className="mb-6 rounded-xl border border-emerald-500/25 bg-emerald-950/40 px-4 py-3 text-left">
+            <p className="text-xs font-medium text-emerald-400/90 uppercase tracking-wide mb-2">Demo account</p>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm font-mono text-slate-300">
+              <dt className="text-slate-500">Email</dt>
+              <dd className="select-all break-all">{DEMO_EMAIL}</dd>
+              <dt className="text-slate-500">Password</dt>
+              <dd className="select-all">{DEMO_PASSWORD}</dd>
+            </dl>
+            <button
+              type="button"
+              onClick={signInAsDemo}
+              disabled={loading}
+              className="mt-3 w-full py-2 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 text-white text-sm font-medium disabled:opacity-50 border border-emerald-500/40"
+            >
+              Sign in as demo
+            </button>
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-xl shadow-black/40 backdrop-blur"
