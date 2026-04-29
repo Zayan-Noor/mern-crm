@@ -19,6 +19,14 @@ app.use(
 );
 app.use(express.json());
 
+app.get('/', (req, res) =>
+  res.json({
+    name: 'MERN CRM API',
+    health: '/api/health',
+    tip: 'Open the app at http://localhost:5173 (Vite dev server)',
+  })
+);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/deals', dealRoutes);
