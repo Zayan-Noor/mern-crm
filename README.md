@@ -4,7 +4,7 @@ Full-stack CRM application with MongoDB, Express, React (Vite), and Node.js: JWT
 
 ## Repository
 
-GitHub repository name: **`mern-crm`**. Create it (see [Setup](#setup)) or clone after publishing.
+Published as **`mern-crm`** on GitHub: [https://github.com/Zayan-Noor/mern-crm](https://github.com/Zayan-Noor/mern-crm).
 
 ## Tech stack
 
