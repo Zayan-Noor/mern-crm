@@ -9,6 +9,7 @@ const USER_KEY = 'user';
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+  const [authReady, setAuthReady] = useState(() => !localStorage.getItem(TOKEN_KEY));
   const [user, setUser] = useState(() => {
     try {
       const raw = localStorage.getItem(USER_KEY);
@@ -27,6 +28,23 @@ export function AuthProvider({ children }) {
       localStorage.removeItem(TOKEN_KEY);
     }
   }, [token]);
+
+  useEffect(() => {
+    const t = localStorage.getItem(TOKEN_KEY);
+    if (!t) return;
+    api.defaults.headers.common.Authorization = `Bearer ${t}`;
+    authApi
+      .getMe()
+      .then((data) => setUser(data.user))
+      .catch(() => {
+        setToken(null);
+        setUser(null);
+        delete api.defaults.headers.common.Authorization;
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+      })
+      .finally(() => setAuthReady(true));
+  }, []);
 
   useEffect(() => {
     if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
@@ -56,12 +74,13 @@ export function AuthProvider({ children }) {
     () => ({
       token,
       user,
+      authReady,
       isAuthenticated: !!token,
       login,
       register,
       logout,
     }),
-    [token, user, login, register, logout]
+    [token, user, authReady, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

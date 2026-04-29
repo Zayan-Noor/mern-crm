@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import AuthLoading from '../components/AuthLoading.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 
 export default function Login() {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, authReady } = useAuth();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/dashboard';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  if (!authReady) return <AuthLoading />;
   if (isAuthenticated) return <Navigate to={from} replace />;
 
   async function handleSubmit(e) {

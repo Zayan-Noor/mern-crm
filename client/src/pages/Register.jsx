@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import AuthLoading from '../components/AuthLoading.jsx';
 import { useAuth } from '../hooks/useAuth.js';
 
 export default function Register() {
-  const { register, isAuthenticated } = useAuth();
+  const { register, isAuthenticated, authReady } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  if (!authReady) return <AuthLoading />;
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
 
   async function handleSubmit(e) {

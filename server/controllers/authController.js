@@ -26,6 +26,12 @@ export const register = async (req, res) => {
   }
 };
 
+export const getMe = (req, res) => {
+  res.json({
+    user: { id: req.user._id, name: req.user.name, email: req.user.email },
+  });
+};
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;

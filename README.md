@@ -12,7 +12,7 @@ Published as **`mern-crm`** on GitHub: [https://github.com/Zayan-Noor/mern-crm](
 |----------|-------------------------------------------------|
 | Backend  | Node.js, Express, Mongoose, JWT (bcrypt)        |
 | Frontend | React (Vite), Tailwind CSS, Recharts, hello-pangea/dnd, react-hot-toast |
-| Database | MongoDB Atlas (connection string in `.env`)    |
+| Database | MongoDB Atlas **or** local MongoDB (Docker compose included) |
 
 Monorepo layout:
 
@@ -22,8 +22,7 @@ Monorepo layout:
 ## Prerequisites
 
 - Node.js 18+
-- MongoDB Atlas cluster (or local MongoDB) and connection URI
-- Git (optional: [GitHub CLI](https://cli.github.com/) (`gh`) to create the remote repo from the command line)
+- MongoDB: either [MongoDB Atlas](https://www.mongodb.com/atlas) **or** [Docker Desktop](https://www.docker.com/products/docker-desktop/) for the bundled database
 
 ## Setup
 
@@ -45,7 +44,20 @@ cd ../client && npm install
 
 ### 2. Environment variables
 
-**`server/.env`** (copy from `server/.env.example`):
+**Option A — Quick local run (Docker MongoDB)**
+
+Start MongoDB and create default env files (skipped if `server/.env` / `client/.env` already exist):
+
+```bash
+npm run setup:local
+npm run docker:up
+```
+
+**Option B — Manual**
+
+Copy `server/.env.example` → `server/.env` and `client/.env.example` → `client/.env`, then fill in values.
+
+For Atlas, use a URI like:
 
 ```env
 MONGO_URI=mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/mern-crm?retryWrites=true&w=majority
@@ -53,7 +65,15 @@ JWT_SECRET=your-long-random-secret-min-32-chars
 PORT=5000
 ```
 
-**`client/.env`** (copy from `client/.env.example`):
+For local Docker (after `npm run docker:up`):
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/mern-crm
+JWT_SECRET=your-long-random-secret-min-32-chars
+PORT=5000
+```
+
+**`client/.env`:**
 
 ```env
 VITE_API_URL=http://localhost:5000
@@ -61,14 +81,15 @@ VITE_API_URL=http://localhost:5000
 
 Adjust `VITE_API_URL` if the API runs on another host or port.
 
-### 3. Seed sample data (optional)
+### 3. Seed sample data (recommended)
 
-With `MONGO_URI` set in `server/.env`:
+With MongoDB running and `MONGO_URI` set in `server/.env`:
 
 ```bash
-cd server
 npm run seed
 ```
+
+(or `cd server && npm run seed`)
 
 Creates a demo user:
 
@@ -79,7 +100,7 @@ Also inserts 10 contacts (mixed statuses) and 8 deals (mixed stages).
 
 ### 4. Run in development
 
-From the **repository root**:
+Ensure MongoDB is reachable (`npm run docker:up` if you use Docker). Then from the **repository root**:
 
 ```bash
 npm run dev
@@ -118,6 +139,8 @@ Use another name if `mern-crm` is taken; update the remote URL accordingly.
 - `POST /api/auth/login` — body: `{ email, password }`
 
 **Protected** (header: `Authorization: Bearer <JWT>`)
+
+- `GET /api/auth/me` — returns current user (validates stored JWT)
 
 - Contacts: `GET/POST /api/contacts`, `GET/PUT/DELETE /api/contacts/:id`, `POST /api/contacts/:id/notes`
 - Deals: `GET/POST /api/deals`, `PUT/DELETE /api/deals/:id`

@@ -55,7 +55,12 @@ export default function ContactDetail() {
           company: c.company || '',
           status: c.status || 'lead',
         });
-        setDeals(allDeals.filter((d) => d.contact?._id === id || d.contact === id));
+        setDeals(
+          allDeals.filter((d) => {
+            const cid = d.contact?._id ?? d.contact;
+            return cid != null && String(cid) === String(id);
+          })
+        );
       } catch {
         toast.error('Contact not found');
         navigate('/contacts');

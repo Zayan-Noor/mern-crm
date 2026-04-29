@@ -42,8 +42,14 @@ const start = async () => {
     console.error('Missing JWT_SECRET in .env');
     process.exit(1);
   }
-  await mongoose.connect(process.env.MONGO_URI);
-  console.log('MongoDB connected');
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection failed:', err.message);
+    console.error('Tip: Start local MongoDB with `npm run docker:up`, or set MONGO_URI to MongoDB Atlas.');
+    process.exit(1);
+  }
   app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 };
 
